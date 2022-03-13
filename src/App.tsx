@@ -25,10 +25,12 @@ interface CardData {
   tools: string[];
 }
 
+// Maybe create an array of values that can be filter
+
 function App() {
 
   const [initalData, setData] = useState(data);
-  const [categories, setCategories] = useState();
+  const [filterBox, setFilterBox] = useState([]); //['Frontend']
 
   const filterRole = (role: string): void => {
     const newData = initalData.filter((data) => data.role === role);
@@ -79,7 +81,7 @@ function App() {
       <div className='w-80 h-9 bg-white m-auto mb-3 relative rounded-sm translate-y-55 shadow-xl flex items-center pl-3 justify-between'>
         <div className={`${style.button3} mt-3 h-4 flex mr-2 items-center rounded-sm`}>
           <span className='text-left'>Hello</span>
-          <button className='rounded-r-sm bg-bgImage flex items-center h-5 mb-1 translate-x-2 hover:bg-black'><span className='font-bold text-navbar'><img src="./images/icon-remove.svg" alt="" width='25' height='25' /></span></button>
+          <button className='rounded-r-sm bg-bgImage flex items-center h-5 mb-1 pl-2 translate-x-2 hover:bg-black'><img src="./images/icon-remove.svg" alt="" width='10' height='10' className='translate-x-close translate-y-closey' /></button>
         </div>
         <span className='text-right text-navbar px-5 text-bgImage font-bold underline cursor-pointer'>Clear</span>
       </div>

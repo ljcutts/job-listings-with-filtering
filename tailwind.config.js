@@ -15,7 +15,10 @@ module.exports = {
         '70': '70px',
       },
       backgroundImage: {
-        'mobileHeader': "url('/public/images/bg-header-mobile.svg')"
+        'close': "url('/public/images/icon-remove.svg')"
+      },
+      backgroundSize: {
+        '50': '50%',
       },
       width: {
         '312': '312px',
@@ -25,7 +28,9 @@ module.exports = {
       },
       translate: {
         '4': '-1.4rem',
-        '55': '-1.3rem'
+        '55': '-1.3rem',
+        'close' : '-0.25rem',
+        'closey' : '0.5px'
       },
       fontSize: {
         navbar: ['9px', {
