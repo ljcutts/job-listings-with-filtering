@@ -25,8 +25,16 @@ module.exports = {
       },
       translate: {
         '4': '-1.4rem',
+        '55': '-1.3rem'
+      },
+      fontSize: {
+        navbar: ['9px', {
+          lineHeight: '1rem',
+        }],
+        x: ['5px', {
+          lineHeight: '1rem',
+        }],
       }
-
     },
   },
   plugins: [],
