@@ -31,6 +31,7 @@ type IState = {
 }
  
 // Maybe create an array of values that can be filter
+// Fix CSS for filter navbar
 
 function App() {
 
@@ -54,6 +55,7 @@ function App() {
       setFilterBox(newPosition); 
       console.log(position)
       console.log(filterActive)
+      // Use the include method for these as well
     } else if (position = 'Fullstack Developer' || 'Full Stack Engineer' || 'Software Engineer') {
 
     } else if (position = 'Junior Frontend Developer' || 'Junior Backend Developer' || 'Junior Developer' || 'Front-end Dev') {
@@ -66,28 +68,14 @@ function App() {
     setData(newData);
   };
 
-  const filterLanguageOne = (language: string[0]): void => {
-    const newData = initalData.filter((data) => data.languages[0] === language);
+  const filterLanguage = (language: string): void => {
+    const newData = initalData.filter((data) => data.languages.includes(language));
     setData(newData);
+    console.log(language)
   };
 
-  const filterLanguageTwo = (language: string[1]): void => {
-    const newData = initalData.filter((data) => data.languages[1] === language);
-    setData(newData);
-  };
-
-  const filterLanguageThree = (language: string[2]): void => {
-    const newData = initalData.filter((data) => data.languages[2] === language);
-    setData(newData);
-  };
-
-  const filterToolOne = (tool: string[0]): void => {
-    const newData = initalData.filter((data) => data.tools[0] === tool);
-    setData(newData);
-  };
-
-  const filterToolTwo = (tool: string[1]): void => {
-    const newData = initalData.filter((data) => data.tools[1] === tool);
+  const filterTool = (tool: string): void => {
+    const newData = initalData.filter((data) => data.tools.includes(tool));
     setData(newData);
   };
 
@@ -146,11 +134,11 @@ function App() {
            <div className='mt-4 flex flex-wrap'>
             <button className={style.button} onClick={() => filterRole(role)}>{role}</button>
             <button className={style.button} onClick={() => filterLevel(level)}>{level}</button>
-            <button className={style.button} onClick={() => filterLanguageOne(languages[0])}>{languages[0]}</button>
-            <button className={languages.length > 1 ? `${style.button}` : ''} onClick={() => filterLanguageTwo(languages[1])}>{languages.length > 1 ? languages[1] : ''}</button>
-            <button className={languages.length > 2 ? `${style.button}` : ''} onClick={() => filterLanguageThree(languages[2])}>{languages.length > 2 ? languages[2] : ''}</button>
-            <button className={tools.length > 0 ? `${style.button}` : ''} onClick={() => filterToolOne(tools[0])}>{tools.length > 0 ? tools[0] : ''}</button>
-            <button className={tools.length > 1 ? `${style.button}` : ''} onClick={() => filterToolTwo(tools[1])}>{tools.length > 1 ? tools[1] : ''}</button>
+            <button className={style.button} onClick={() => filterLanguage(languages[0])}>{languages[0]}</button>
+            <button className={languages.length > 1 ? `${style.button}` : ''} onClick={() => filterLanguage(languages[1])}>{languages.length > 1 ? languages[1] : ''}</button>
+            <button className={languages.length > 2 ? `${style.button}` : ''} onClick={() => filterLanguage(languages[2])}>{languages.length > 2 ? languages[2] : ''}</button>
+            <button className={tools.length > 0 ? `${style.button}` : ''} onClick={() => filterTool(tools[0])}>{tools.length > 0 ? tools[0] : ''}</button>
+            <button className={tools.length > 1 ? `${style.button}` : ''} onClick={() => filterTool(tools[1])}>{tools.length > 1 ? tools[1] : ''}</button>
            </div>
           </section>  
         </div>
