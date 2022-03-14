@@ -25,21 +25,40 @@ interface CardData {
   tools: string[];
 }
 
+type IState = {
+  filterBox: string[];
+  setFilterBox: React.Dispatch<React.SetStateAction<string[]>>; 
+}
+ 
 // Maybe create an array of values that can be filter
 
 function App() {
 
   const [initalData, setData] = useState(data);
-  const [filterBox, setFilterBox] = useState([]); //['Frontend']
+  const [filterBox, setFilterBox] = useState<IState["filterBox"]>([]); //['Frontend']
+  const [filterActive, setFilterActive] = useState(false);
 
   const filterRole = (role: string): void => {
     const newData = initalData.filter((data) => data.role === role);
     setData(newData);
   };
 
-  const filterPosition = (position: string): void => {
+  const filterPosition = (position: string ): void => {
     const newData = initalData.filter((data) => data.position === position);
     setData(newData);
+    setFilterActive(true)
+    console.log('hello')
+    if(position = "Senior Frontend Developer") {
+      const newItem = 'Senior';
+      const newPosition = [...filterBox, newItem];
+      setFilterBox(newPosition); 
+      console.log(position)
+      console.log(filterActive)
+    } else if (position = 'Fullstack Developer' || 'Full Stack Engineer' || 'Software Engineer') {
+
+    } else if (position = 'Junior Frontend Developer' || 'Junior Backend Developer' || 'Junior Developer' || 'Front-end Dev') {
+
+    }
   };
 
   const filterLevel = (level: string): void => {
@@ -72,19 +91,34 @@ function App() {
     setData(newData);
   };
 
+  const clearFilter = (): void => {
+    setFilterBox([])
+    setFilterActive(false);
+  }
+
 
 
   return (
     <main>
        <div className='h-156 bg-bgImage mb-70 bg-mobileHeader bg-no-repeat bg-fixed'>
       <img src="./images/bg-header-mobile.svg" className='max-h-156' />
-      <div className='w-80 h-9 bg-white m-auto mb-3 relative rounded-sm translate-y-55 shadow-xl flex items-center pl-3 justify-between'>
-        <div className={`${style.button3} mt-3 h-4 flex mr-2 items-center rounded-sm`}>
-          <span className='text-left'>Hello</span>
-          <button className='rounded-r-sm bg-bgImage flex items-center h-5 mb-1 pl-2 translate-x-2 hover:bg-black'><img src="./images/icon-remove.svg" alt="" width='10' height='10' className='translate-x-close translate-y-closey' /></button>
-        </div>
-        <span className='text-right text-navbar px-5 text-bgImage font-bold underline cursor-pointer'>Clear</span>
-      </div>
+     {filterActive && 
+       <div className='w-80 h-9 bg-white m-auto mb-3 relative rounded-sm translate-y-55 shadow-xl flex items-center pl-3 justify-between'>
+       <div className={`${style.button3} mt-3 h-4 flex items-center justify-between rounded-sm`}>
+         {filterBox.map((value: string) => {
+           return (
+             <> 
+             <div className='flex justify-between items-center'>
+             <span key={value} className='text-left'>{value}</span>
+            <button className='rounded-r-sm bg-bgImage flex items-center h-5 mb-1  pl-2 translate-x-2 hover:bg-black'><img src="./images/icon-remove.svg" alt="" width='10' height='10' className='translate-x-close translate-y-closey' /></button>
+             </div>
+            </>
+           )
+         })}
+       </div>
+       <span className='text-right text-navbar px-5 text-bgImage font-bold underline cursor-pointer' onClick={clearFilter}>Clear</span>
+     </div>
+     }
     </div>
    
     {initalData.map((card: CardData): JSX.Element => {
