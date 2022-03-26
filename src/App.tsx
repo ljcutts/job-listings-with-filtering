@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { idText } from "typescript";
+import React, { useState } from "react";
 import "./App.css";
 import data from "./data.json";
 
@@ -30,15 +29,18 @@ type IState = {
   setFilterBox: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-
-// Fix CSS for filter navbar
-//How to reverse the process of filtering the data
-//Fix key error
+type IState2 = {
+  filterToggle: boolean;
+  setFilterToggle: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 function App() {
   const [initalData, setData] = useState(data);
-  const [filterBox, setFilterBox] = useState<IState["filterBox"]>([]); //['Frontend']
+  const [secondInitalData, setSecondData] = useState(data);
+  const [filterBox, setFilterBox] = useState<IState["filterBox"]>([]); 
+  const [filterToggle, setFilterToggle] = useState<IState2["filterToggle"]>(false)
   const [filterActive, setFilterActive] = useState(false);
+
 
   const filterRole = (role: string): void => {
     const newData = initalData.filter((data) => data.role === role);
@@ -57,7 +59,6 @@ function App() {
     let newItem, newPosition;
     const newData = initalData.filter((data) => data.position === position);
     setData(newData);
-    setFilterActive(true);
     if (filterBox.includes("Senior")) {
       setFilterBox(filterBox);
     } else if (filterBox.includes("Fullstack")) {
@@ -69,14 +70,12 @@ function App() {
         newItem = "Senior";
         newPosition = [...filterBox, newItem];
         setFilterBox(newPosition);
-        console.log(position);
       }
 
       if (position === "Fullstack Developer") {
         newItem = "Fullstack";
         newPosition = [...filterBox, newItem];
         setFilterBox(newPosition);
-        console.log(position);
         const newData = initalData.filter((data) => data.position === position);
         setData(newData);
       }
@@ -90,30 +89,32 @@ function App() {
         newItem = "Junior";
         newPosition = [...filterBox, newItem];
         setFilterBox(newPosition);
-        console.log(position);
       }
+      setFilterActive(true)
     }
   };
 
-  const deleteFilter = (value: string): void => {
-    //position, role, level, languages, tools
-    setFilterBox(filterBox.filter((item) => item !== value));
-    const newData = initalData.filter(
-      (data) => data.level.includes(value) && data.position.includes(value)
-    );
-    setData(newData);
-    // const iterator = filterBox.values();
+    const clearFilter = (): void => {
+      setFilterBox([]);
+      setData(data);
+      setFilterActive(false);
+    };
 
-    // for (let letter of iterator) {
-    //   console.log(letter);
-    // } //"a" "b" "c" "d" "e"
-    // console.log(filterBox.values());
+  const deleteFilter = (value: string): void => {
+    setFilterBox(filterBox.filter((item) => item !== value));
+    if(filterBox.length < 2) {
+      setFilterBox([]);
+      setData(data);
+      setFilterActive(false);
+      setFilterToggle(false)
+    }
   };
 
   const filterLevel = (level: string): void => {
     const newData = initalData.filter((data) => data.level === level);
     setData(newData);
     setFilterActive(true);
+    setFilterToggle(false)
     if (filterBox.includes(level)) {
       setFilterBox(filterBox);
     } else {
@@ -151,22 +152,15 @@ function App() {
     }
   };
 
-  const clearFilter = (): void => {
-    setFilterBox([]);
-    setData(data);
-    setFilterActive(false);
-  };
-
   return (
     <main>
-      <div className="h-156 bg-bgImage mb-70 bg-mobileHeader bg-no-repeat bg-fixed">
-        <img src="./images/bg-header-mobile.svg" className="max-h-156" />
+      <div className="h-156 bg-bgImage mb-70 bg-mobileHeader bg-no-repeat bg-fixed bg-mobile bg-75 md:bg-desktop md:bg-100">
         {filterActive && (
-          <div className="w-80 h-9 bg-white m-auto mb-3 relative rounded-sm translate-y-55 shadow-xl flex items-center pl-3 overflow-scroll">
-            {filterBox.map((value: string, index): JSX.Element => {
+          <div className="w-80 h-9 bg-white m-auto mb-3 relative rounded-sm translate-y-55 shadow-xl flex items-center pl-3 overflow-scroll md:translate-y-33 md:w-800 md:pl-5">
+            {filterBox.map((value: string): JSX.Element => {
               return (
-                <>
-                  <div key={value}
+                <section key={value}>
+                  <div
                     className={`${style.button3} mt-3 h-4 flex items-center rounded-sm`}
                   >
                     <div className="flex items-center">
@@ -185,7 +179,7 @@ function App() {
                       </button>
                     </div>
                   </div>
-                </>
+                </section>
               );
             })}
             <span
@@ -197,115 +191,226 @@ function App() {
           </div>
         )}
       </div>
-
-      {initalData.map((card: CardData): JSX.Element => {
-        const {
-          id,
-          company,
-          logo,
-          position,
-          role,
-          level,
-          postedAt,
-          contract,
-          location,
-          languages,
-          tools,
-        } = card;
-        return (
-          <div
-            className="bg-white w-80 m-auto h-64 rounded-md shadow-xl mb-11"
-            key={id}
-          >
-            <img
-              className="z-50 absolute translate-y-4 translate-x-8 "
-              src={logo}
-              height="50"
-              width="50"
-            />
-            <div className="bg-bgImage h-64 w-2 rounded-l-md">
-              <section className="w-312 h-64  ml-2 p-5 pt-10">
-                <div className="h-28 border-solid border-b-2 ">
-                  <div className="flex items-center mb-3">
-                    <span className="text-bgImage font-semibold text-sm pr-4">
-                      {company}
-                    </span>
-                    <div
-                      className={card.new ? `${style.button2} bg-bgImage` : ""}
-                    >
-                      {card.new ? "NEW!" : ""}
+      {filterToggle === true ?  
+         
+        secondInitalData.map((card: CardData): JSX.Element => {
+          const {
+            id,
+            company,
+            logo,
+            position,
+            role,
+            level,
+            postedAt,
+            contract,
+            location,
+            languages,
+            tools,
+          } = card;
+          return (
+            <div
+              className="bg-white w-80 m-auto h-64 rounded-md shadow-xl mb-11 md:w-800 md:h-32"
+              key={id}
+            >
+              <img
+                className="z-50 absolute translate-y-4 translate-x-8 w-50 h-50 md:w-75 md:h-75 md:translate-y-45"
+                src={logo} alt='logo'
+              />
+              <div className="bg-bgImage h-64 w-2 rounded-l-md md:h-32">
+                <section className="w-312 h-64 ml-2 p-5 pt-10 md:flex md:items-center md:p-0 md:ml-40 md:h-32">
+                  <div className="h-28 border-solid border-b-2 md:border-none md:mr-12 md:pt-3 md:w-full">
+                    <div className="flex items-center mb-3">
+                      <span className="text-bgImage font-semibold text-sm pr-4">
+                        {company}
+                      </span>
+                      <div
+                        className={
+                          card.new ? `${style.button2} bg-bgImage` : ""
+                        }
+                      >
+                        {card.new ? "NEW!" : ""}
+                      </div>
+                      <div
+                        className={
+                          card.featured ? `${style.button2} bg-black` : ""
+                        }
+                      >
+                        {card.featured ? "FEATURED" : ""}
+                      </div>
                     </div>
-                    <div
-                      className={
-                        card.featured ? `${style.button2} bg-black` : ""
-                      }
+                    <h1
+                      className="font-semibold mb-2 hover:text-bgImage cursor-pointer md:whitespace-nowrap"
+                      onClick={() => filterPosition(position)}
                     >
-                      {card.featured ? "FEATURED" : ""}
+                      {position}
+                    </h1>
+                    <div className="text-sm opacity-50 flex items-center md:whitespace-nowrap">
+                      <span className="mr-2">{postedAt}</span>
+                      <div className="w-1 h-1 rounded-lg bg-black mr-2"></div>
+                      <span className="mr-2">{contract}</span>
+                      <div className="w-1 h-1 rounded-lg bg-black mr-2"></div>
+                      <span>{location}</span>
                     </div>
                   </div>
-                  <h1
-                    className="font-semibold mb-2 hover:text-bgImage cursor-pointer"
-                    onClick={() => filterPosition(position)}
-                  >
-                    {position}
-                  </h1>
-                  <div className="text-sm opacity-50 flex items-center">
-                    <span className="mr-2">{postedAt}</span>
-                    <div className="w-1 h-1 rounded-lg bg-black mr-2"></div>
-                    <span className="mr-2">{contract}</span>
-                    <div className="w-1 h-1 rounded-lg bg-black mr-2"></div>
-                    <span>{location}</span>
+                  <div className="mt-4 flex flex-wrap md:flex-nowrap md:w-full">
+                    <button
+                      className={style.button}
+                      onClick={() => filterRole(role)}
+                    >
+                      {role}
+                    </button>
+                    <button
+                      className={style.button}
+                      onClick={() => filterLevel(level)}
+                    >
+                      {level}
+                    </button>
+                    <button
+                      className={style.button}
+                      onClick={() => filterLanguage(languages[0])}
+                    >
+                      {languages[0]}
+                    </button>
+                    <button
+                      className={languages.length > 1 ? `${style.button}` : ""}
+                      onClick={() => filterLanguage(languages[1])}
+                    >
+                      {languages.length > 1 ? languages[1] : ""}
+                    </button>
+                    <button
+                      className={languages.length > 2 ? `${style.button}` : ""}
+                      onClick={() => filterLanguage(languages[2])}
+                    >
+                      {languages.length > 2 ? languages[2] : ""}
+                    </button>
+                    <button
+                      className={tools.length > 0 ? `${style.button}` : ""}
+                      onClick={() => filterTool(tools[0])}
+                    >
+                      {tools.length > 0 ? tools[0] : ""}
+                    </button>
+                    <button
+                      className={tools.length > 1 ? `${style.button}` : ""}
+                      onClick={() => filterTool(tools[1])}
+                    >
+                      {tools.length > 1 ? tools[1] : ""}
+                    </button>
                   </div>
-                </div>
-                <div className="mt-4 flex flex-wrap">
-                  <button
-                    className={style.button}
-                    onClick={() => filterRole(role)}
-                  >
-                    {role}
-                  </button>
-                  <button
-                    className={style.button}
-                    onClick={() => filterLevel(level)}
-                  >
-                    {level}
-                  </button>
-                  <button
-                    className={style.button}
-                    onClick={() => filterLanguage(languages[0])}
-                  >
-                    {languages[0]}
-                  </button>
-                  <button
-                    className={languages.length > 1 ? `${style.button}` : ""}
-                    onClick={() => filterLanguage(languages[1])}
-                  >
-                    {languages.length > 1 ? languages[1] : ""}
-                  </button>
-                  <button
-                    className={languages.length > 2 ? `${style.button}` : ""}
-                    onClick={() => filterLanguage(languages[2])}
-                  >
-                    {languages.length > 2 ? languages[2] : ""}
-                  </button>
-                  <button
-                    className={tools.length > 0 ? `${style.button}` : ""}
-                    onClick={() => filterTool(tools[0])}
-                  >
-                    {tools.length > 0 ? tools[0] : ""}
-                  </button>
-                  <button
-                    className={tools.length > 1 ? `${style.button}` : ""}
-                    onClick={() => filterTool(tools[1])}
-                  >
-                    {tools.length > 1 ? tools[1] : ""}
-                  </button>
-                </div>
-              </section>
+                </section>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        }) : 
+        initalData.map((card: CardData): JSX.Element => {
+          const {
+            id,
+            company,
+            logo,
+            position,
+            role,
+            level,
+            postedAt,
+            contract,
+            location,
+            languages,
+            tools,
+          } = card;
+          return (
+            <div
+              className="bg-white w-80 m-auto h-64 rounded-md shadow-xl mb-11 md:w-800 md:h-32"
+              key={id}
+            >
+              <img
+                className="z-50 absolute translate-y-4 translate-x-8 w-50 h-50 md:w-75 md:h-75 md:translate-y-45"
+                src={logo}
+                alt="logo"
+              />
+              <div className="bg-bgImage h-64 w-2 rounded-l-md md:h-32">
+                <section className="w-312 h-64 ml-2 p-5 pt-10 md:flex md:items-center md:p-0 md:ml-40 md:h-32">
+                  <div className="h-28 border-solid border-b-2 md:border-none md:mr-12 md:pt-3 md:w-full">
+                    <div className="flex items-center mb-3">
+                      <span className="text-bgImage font-semibold text-sm pr-4">
+                        {company}
+                      </span>
+                      <div
+                        className={
+                          card.new ? `${style.button2} bg-bgImage` : ""
+                        }
+                      >
+                        {card.new ? "NEW!" : ""}
+                      </div>
+                      <div
+                        className={
+                          card.featured ? `${style.button2} bg-black` : ""
+                        }
+                      >
+                        {card.featured ? "FEATURED" : ""}
+                      </div>
+                    </div>
+                    <h1
+                      className="font-semibold mb-2 hover:text-bgImage cursor-pointer md:whitespace-nowrap"
+                      onClick={() => filterPosition(position)}
+                    >
+                      {position}
+                    </h1>
+                    <div className="text-sm opacity-50 flex items-center md:whitespace-nowrap">
+                      <span className="mr-2">{postedAt}</span>
+                      <div className="w-1 h-1 rounded-lg bg-black mr-2"></div>
+                      <span className="mr-2">{contract}</span>
+                      <div className="w-1 h-1 rounded-lg bg-black mr-2"></div>
+                      <span>{location}</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap md:flex-nowrap md:w-full">
+                    <button
+                      className={style.button}
+                      onClick={() => filterRole(role)}
+                    >
+                      {role}
+                    </button>
+                    <button
+                      className={style.button}
+                      onClick={() => filterLevel(level)}
+                    >
+                      {level}
+                    </button>
+                    <button
+                      className={style.button}
+                      onClick={() => filterLanguage(languages[0])}
+                    >
+                      {languages[0]}
+                    </button>
+                    <button
+                      className={languages.length > 1 ? `${style.button}` : ""}
+                      onClick={() => filterLanguage(languages[1])}
+                    >
+                      {languages.length > 1 ? languages[1] : ""}
+                    </button>
+                    <button
+                      className={languages.length > 2 ? `${style.button}` : ""}
+                      onClick={() => filterLanguage(languages[2])}
+                    >
+                      {languages.length > 2 ? languages[2] : ""}
+                    </button>
+                    <button
+                      className={tools.length > 0 ? `${style.button}` : ""}
+                      onClick={() => filterTool(tools[0])}
+                    >
+                      {tools.length > 0 ? tools[0] : ""}
+                    </button>
+                    <button
+                      className={tools.length > 1 ? `${style.button}` : ""}
+                      onClick={() => filterTool(tools[1])}
+                    >
+                      {tools.length > 1 ? tools[1] : ""}
+                    </button>
+                  </div>
+                </section>
+              </div>
+            </div>
+          );
+        })}
+     
     </main>
   );
 }
